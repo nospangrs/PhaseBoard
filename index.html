@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PhaseBoard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F7F6F2; --surface: #FFFFFF; --surface2: #F0EEE8;
+    --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.15);
+    --text: #1A1917; --text-muted: #7A7870; --text-hint: #B0AEA6;
+    --radius: 10px; --radius-lg: 14px;
+    --font: 'DM Sans', sans-serif; --font-mono: 'DM Mono', monospace;
+    --green: #1D9E75; --green-dark: #0F6E56;
+    --blue: #185FA5; --blue-dark: #0C447C;
+    --gray-dot: #C8C6BE; --red: #C0392B;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); padding: 0 0.5rem; margin-bottom: 1rem; }
+  .sidebar-logo span { color: var(--blue); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); font-weight: 500; border: none; background: none; width: 100%; text-align: left; transition: background 0.15s, color 0.15s; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--text); color: #fff; }
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+  .sidebar-section { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); padding: 0.75rem 0.5rem 0.25rem; margin-top: 0.5rem; }
+  .team-nav { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); border: none; background: none; width: 100%; text-align: left; transition: background 0.15s; }
+  .team-nav:hover { background: var(--surface2); color: var(--text); }
+  .team-nav.active { color: var(--text); font-weight: 500; background: var(--surface2); }
+  .team-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--blue); }
+  .badge { font-size: 11px; background: var(--surface2); color: var(--text-muted); border-radius: 99px; padding: 1px 6px; margin-left: auto; font-family: var(--font-mono); }
+  .sync-status { font-size: 11px; color: var(--text-hint); padding: 0 0.5rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 5px; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .sync-dot.syncing { background: #F59E0B; animation: pulse 1s infinite; }
+  .sync-dot.error { background: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .main { padding: 2rem 2.5rem; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
+  .page-title { font-size: 22px; font-weight: 600; }
+  .btn { font-family: var(--font); font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; transition: background 0.15s; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--text); color: #fff; border-color: var(--text); }
+  .btn-primary:hover { background: #333; }
+  .btn-ghost { border-color: transparent; background: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 600; font-family: var(--font-mono); }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .tcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.1rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .tcard:hover { border-color: var(--border-strong); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .tcard.selected { border: 2px solid var(--text); }
+  .tcard-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .tcard-process { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .tcard-meta { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-family: var(--font-mono); }
+  .mini-phases { display: flex; gap: 4px; flex-wrap: wrap; }
+  .mini-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+  .detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+  .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .detail-title { font-size: 18px; font-weight: 600; flex: 1; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+  .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+  .status-legend { display: flex; gap: 14px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .phase-flow { display: flex; align-items: flex-start; flex-wrap: wrap; row-gap: 1rem; padding-bottom: 8px; margin-bottom: 1.5rem; gap: 0; }
+  .phase-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; position: relative; }
+  .phase-circle { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 500; text-align: center; cursor: pointer; border: 2.5px solid transparent; transition: transform 0.15s, box-shadow 0.15s; line-height: 1.2; padding: 6px; word-break: break-word; overflow: hidden; hyphens: auto; }
+  .phase-circle:hover { transform: scale(1.08); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .phase-circle.done { background: var(--green); border-color: var(--green-dark); color: #fff; }
+  .phase-circle.active { background: var(--blue); border-color: var(--blue-dark); color: #fff; }
+  .phase-circle.pending { background: var(--surface2); border-color: var(--gray-dot); color: var(--text-muted); }
+  .phase-label { display: none; }
+  .phase-arrow { width: 18px; height: 2px; background: var(--border-strong); flex-shrink: 0; margin-top: 31px; }
+  .status-menu { position: absolute; top: 68px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12); padding: 4px; z-index: 100; min-width: 130px; }
+  .status-opt { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; font-size: 12px; font-weight: 500; color: var(--text); }
+  .status-opt:hover { background: var(--surface2); }
+  .status-opt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .action-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .action-item { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; }
+  .action-item.done { opacity: 0.4; }
+  .action-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+  .check { width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--border-strong); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+  .check.on { background: var(--green); border-color: var(--green); color: #fff; }
+  .action-text-input { flex: 1; font-size: 13px; font-family: var(--font); border: none; background: transparent; color: var(--text); outline: none; cursor: text; }
+  .action-text-input:focus { background: var(--surface); border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
+  .action-expand { border: none; background: none; cursor: pointer; color: var(--text-hint); font-size: 11px; padding: 2px 5px; flex-shrink: 0; transition: transform 0.2s; }
+  .action-expand:hover { color: var(--text-muted); }
+  .action-expand.open { transform: rotate(180deg); }
+  .action-note-area { border-top: 1px solid var(--border); padding: 8px 12px 10px 39px; display: none; }
+  .action-note-area.open { display: block; }
+  .action-note-input { width: 100%; font-family: var(--font); font-size: 12px; color: var(--text); background: transparent; border: none; outline: none; resize: none; min-height: 48px; line-height: 1.5; }
+  .action-note-input::placeholder { color: var(--text-hint); }
+  .action-date-input { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); border: none; background: transparent; cursor: pointer; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; outline: none; }
+  .action-date-input:hover { background: var(--surface2); }
+  .action-date-input.late { color: var(--red); font-weight: 500; }
+  .action-date-input.now { color: var(--green); font-weight: 500; }
+  .action-date-empty { font-size: 11px; color: var(--text-hint); border: none; background: transparent; cursor: pointer; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; font-family: var(--font); outline: none; }
+  .action-date-empty:hover { background: var(--surface2); color: var(--text-muted); }
+  .btn-del { color: var(--text-hint); border: none; background: transparent; font-size: 12px; padding: 4px 8px; cursor: pointer; }
+  .btn-del:hover { color: var(--red); }
+  .add-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.75rem; }
+  .add-row input, .process-input { font-family: var(--font); font-size: 13px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--bg); color: var(--text); outline: none; }
+  .add-row input { flex: 1; min-width: 120px; }
+  .add-row input:focus, .process-input:focus { border-color: var(--text); }
+  .process-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .process-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.1rem; }
+  .process-card.selected-proc { border: 2px solid var(--blue); }
+  .process-card-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .process-card-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .process-steps-preview { display: flex; gap: 4px; flex-wrap: wrap; }
+  .proc-step-pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--surface2); color: var(--text-muted); }
+  .process-card-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .phase-editor { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1rem; }
+  .phase-editor-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .phase-editor-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+  .drag-handle { cursor: grab; color: var(--text-hint); font-size: 14px; flex-shrink: 0; user-select: none; }
+  .drag-handle:active { cursor: grabbing; }
+  .phase-editor-row.drag-over { border-color: var(--blue); background: #185FA510; }
+  .phase-editor-row input { flex: 1; border: none; background: transparent; font-family: var(--font); font-size: 13px; color: var(--text); outline: none; }
+  .move-btn { border: none; background: none; cursor: pointer; color: var(--text-hint); font-size: 14px; padding: 2px 4px; }
+  .move-btn:hover { color: var(--text); }
+  .cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .cal-month { font-size: 16px; font-weight: 600; flex: 1; text-transform: capitalize; }
+  .cal-view-tabs { display: flex; gap: 4px; }
+  .cal-view-tab { font-family: var(--font); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); cursor: pointer; }
+  .cal-view-tab.on { background: var(--text); color: #fff; border-color: var(--text); }
+  .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+  .cal-wd { font-size: 11px; font-weight: 600; text-align: center; color: var(--text-muted); padding: 4px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-cell { border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 5px; min-height: 88px; background: var(--surface); }
+  .cal-cell.is-today { border-color: var(--text); }
+  .cal-num { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; font-family: var(--font-mono); }
+  .cal-cell.is-today .cal-num { color: var(--text); font-weight: 600; }
+  .cal-evt { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px; color: #fff; background: var(--blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+  .cal-more { font-size: 10px; color: var(--text-muted); padding: 1px 4px; }
+  .week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .week-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 8px; min-height: 300px; }
+  .week-col.is-today { border-color: var(--text); }
+  .week-col-header { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-align: center; }
+  .week-col-date { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 8px; font-family: var(--font-mono); }
+  .week-col.is-today .week-col-date { color: var(--blue); }
+  .week-evt { padding: 7px 9px; border-radius: var(--radius); margin-bottom: 5px; background: var(--blue); color: #fff; font-size: 11px; line-height: 1.4; }
+  .week-evt-team { font-weight: 600; font-size: 10px; opacity: 0.85; margin-bottom: 2px; }
+  .week-empty { font-size: 12px; color: var(--text-hint); text-align: center; margin-top: 1.5rem; }
+  .day-evt { display: flex; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 8px; border-left: 4px solid var(--blue); }
+  .day-evt-team { font-size: 12px; font-weight: 600; color: var(--blue); margin-bottom: 3px; }
+  .day-evt-text { font-size: 14px; color: var(--text); }
+  .day-empty { font-size: 13px; color: var(--text-hint); padding: 2rem 0; text-align: center; }
+  .ov-filter { margin-bottom: 1.25rem; }
+  .ov-filter select { font-family: var(--font); font-size: 13px; padding: 7px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); cursor: pointer; outline: none; }
+  .ov-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 6px; cursor: pointer; transition: border-color 0.15s; }
+  .ov-row:hover { border-color: var(--border-strong); }
+  .ov-team { font-size: 12px; font-weight: 500; color: var(--text-muted); flex-shrink: 0; }
+  .ov-text { flex: 1; font-size: 13px; }
+  .ov-date { font-size: 12px; font-family: var(--font-mono); color: var(--text-muted); }
+  .ov-date.late { color: var(--red); font-weight: 500; }
+  .ov-date.now { color: var(--green); font-weight: 500; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(2px); }
+  .modal { background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 1.5rem; width: 360px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 1rem; }
+  .modal input, .modal select { font-family: var(--font); font-size: 14px; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%; outline: none; margin-bottom: 8px; }
+  .modal input:focus, .modal select:focus { border-color: var(--text); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
+  .empty { font-size: 13px; color: var(--text-hint); text-align: center; padding: 2rem 0; }
+  .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
+  .loading-screen p { font-size: 13px; color: var(--text-muted); }
+  .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 680px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 1rem; border-right: none; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { width: 100%; margin-bottom: 0.5rem; }
+    .sidebar-section, .team-nav { display: none; }
+    .main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-screen" class="loading-screen">
+  <div class="spinner"></div>
+  <p>PhaseBoard laden...</p>
+</div>
+
+<div class="layout" id="app" style="display:none;">
+  <aside class="sidebar">
+    <div class="sidebar-logo">Phase<span>Board</span></div>
+    <button class="nav-item active" data-view="teams" onclick="showView('teams',this)"><span class="nav-icon">◻</span> Teams</button>
+    <button class="nav-item" data-view="calendar" onclick="showView('calendar',this)"><span class="nav-icon">◫</span> Kalender</button>
+    <button class="nav-item" data-view="overzicht" onclick="showView('overzicht',this)"><span class="nav-icon">≡</span> Overzicht</button>
+    <button class="nav-item" data-view="processen" onclick="showView('processen',this)"><span class="nav-icon">⚙</span> Processen</button>
+    <div class="sidebar-section">Teams</div>
+    <div id="sidebar-teams"></div>
+    <div style="margin-top:auto;padding-top:1rem;">
+      <button class="nav-item" onclick="openAddTeam()"><span class="nav-icon">+</span> Team toevoegen</button>
+    </div>
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Gesynchroniseerd</span>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div id="modal-root"></div>
+
+<script>
+// ── Supabase config ──────────────────────────────────────────
+const SUPABASE_URL = 'https://nuvlhpbfsytsryehyfmk.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_iNvRtwki1RN8AbzWJkwJuw_1Hz8xcq1';
+
+async function db(method, table, body, id) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}${id ? `?id=eq.${id}` : ''}`;
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'return=representation' : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if(method==='GET' || method==='POST') return res.json();
+  return res.ok;
+}
+
+const GET  = (t, q='') => fetch(`${SUPABASE_URL}/rest/v1/${t}${q}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }).then(r=>r.json());
+const POST = (t, b)    => db('POST', t, b);
+const PATCH= (t, b, id)=> db('PATCH', t, b, id);
+const DEL  = (t, id)   => db('DELETE', t, undefined, id);
+
+// ── State ──────────────────────────────────────────────
+const DEFAULT_PROCESSES = [
+  { id: 'p_default', name: 'IND Correspondentie', phases: [
+    {id:'voorbereiden',label:'Voorbereiden'},{id:'inventariseren',label:'Inventariseren'},
+    {id:'klantonderzoek',label:'Klantonderzoek'},{id:'opleiding',label:'Opleiding'},
+    {id:'herschrijven',label:'Herschrijven'},{id:'implementeren',label:'Implementeren'},
+    {id:'borging',label:'Borging'}
+  ]},
+  { id: 'p_agile', name: 'Agile Onboarding', phases: [
+    {id:'intake',label:'Intake'},{id:'kickoff',label:'Kick-off'},
+    {id:'training',label:'Training'},{id:'coaching',label:'Coaching'},{id:'evaluatie',label:'Evaluatie'}
+  ]}
+];
+
+const SC = {done:'#1D9E75', active:'#185FA5', pending:'#C8C6BE'};
+const SL = {done:'Klaar', active:'In progress', pending:'Nog starten'};
+
+let S = {
+  teams:[], processes:[], sel:null,
+  view:'teams', calY:new Date().getFullYear(), calM:new Date().getMonth(), calDay:null, calView:'maand',
+  ovf:'open', menu:null, editProc:null, dragIdx:null, syncing:false
+};
+
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  if(!dot||!label) return;
+  dot.className = 'sync-dot' + (status==='syncing'?' syncing':status==='error'?' error':'');
+  label.textContent = status==='syncing'?'Opslaan...':status==='error'?'Fout bij opslaan':'Gesynchroniseerd';
+}
+
+// ── Load ──────────────────────────────────────────────
+async function load() {
+  try {
+    const [procs, teams] = await Promise.all([
+      GET('processes', '?order=id'),
+      GET('teams', '?order=id')
+    ]);
+    S.processes = Array.isArray(procs) && procs.length ? procs : [];
+    S.teams = Array.isArray(teams) ? teams.map(t => ({
+      ...t,
+      phaseStatus: t.phase_status || {},
+      actions: t.actions || [],
+      processId: t.process_id
+    })) : [];
+
+    if(!S.processes.length) {
+      for(const p of DEFAULT_PROCESSES) {
+        await POST('processes', {id:p.id, name:p.name, phases:p.phases});
+      }
+      S.processes = DEFAULT_PROCESSES;
+    }
+  } catch(e) {
+    console.error('Load error', e);
+  }
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'grid';
+  render();
+}
+
+// ── Save helpers ──────────────────────────────────────
+async function saveTeam(t) {
+  setSyncStatus('syncing');
+  try {
+    await PATCH('teams', {
+      name: t.name,
+      process_id: t.processId,
+      phase_status: t.phaseStatus,
+      actions: t.actions
+    }, t.id);
+    setSyncStatus('ok');
+  } catch(e) { setSyncStatus('error'); }
+}
+
+async function saveProcess(p) {
+  setSyncStatus('syncing');
+  try {
+    await PATCH('processes', {name:p.name, phases:p.phases}, p.id);
+    setSyncStatus('ok');
+  } catch(e) { setSyncStatus('error'); }
+}
+
+// ── Helpers ──────────────────────────────────────────────
+function uid() { return 'x'+Math.random().toString(36).slice(2,9)+Date.now().toString(36); }
+function today() { return new Date().toISOString().slice(0,10); }
+function dateStatus(d) { if(!d)return ''; if(d<today())return 'late'; if(d===today())return 'now'; return ''; }
+function getProcess(id) { return S.processes.find(p=>p.id===id) || S.processes[0]; }
+function defPhaseStatus(proc) { return Object.fromEntries((proc?.phases||[]).map(p=>[p.id,'pending'])); }
+
+// ── Render ──────────────────────────────────────────────
+function render() {
+  renderSidebar();
+  const m = document.getElementById('main');
+  if(S.view==='teams') renderTeams(m);
+  else if(S.view==='calendar') renderCalendar(m);
+  else if(S.view==='overzicht') renderOverzicht(m);
+  else if(S.view==='processen') renderProcessen(m);
+}
+
+function showView(v, el) {
+  S.view=v; S.menu=null;
+  if(v!=='teams') S.sel=null;
+  document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  render();
+}
+
+function renderSidebar() {
+  const c = document.getElementById('sidebar-teams');
+  if(!c) return;
+  c.innerHTML = S.teams.map((t,i) => {
+    const open = (t.actions||[]).filter(a=>!a.done).length;
+    return `<button class="team-nav${S.sel===i?' active':''}" onclick="selectTeam(${i})">
+      <span class="team-dot"></span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.name}</span>
+      ${open?`<span class="badge">${open}</span>`:''}
+    </button>`;
+  }).join('');
+}
+
+function miniDots(t) {
+  const proc = getProcess(t.processId);
+  return (proc?.phases||[]).map(p => {
+    const st = (t.phaseStatus||{})[p.id]||'pending';
+    const bg = st==='pending'?'transparent':SC[st];
+    const border = st==='pending'?'1.5px solid #C8C6BE':'none';
+    return `<div class="mini-dot" style="background:${bg};border:${border};" title="${p.label}: ${SL[st]}"></div>`;
+  }).join('');
+}
+
+function renderTeams(m) {
+  const totalOpen = S.teams.reduce((s,t)=>s+(t.actions||[]).filter(a=>!a.done).length,0);
+  const totalLate = S.teams.reduce((s,t)=>s+(t.actions||[]).filter(a=>!a.done&&a.date&&a.date<today()).length,0);
+
+  const grid = S.teams.map((t,i) => {
+    const open = (t.actions||[]).filter(a=>!a.done).length;
+    const proc = getProcess(t.processId);
+    return `<div class="tcard${S.sel===i?' selected':''}" onclick="selectTeam(${i})">
+      <div class="tcard-name">${t.name}</div>
+      <div class="tcard-process">${proc?.name||'Geen proces'}</div>
+      <div class="mini-phases">${miniDots(t)}</div>
+      <div class="tcard-meta">${open} open actie${open!==1?'s':''}</div>
+    </div>`;
+  }).join('')||'<div class="empty" style="grid-column:1/-1">Nog geen teams. Voeg een team toe.</div>';
+
+  m.innerHTML=`
+    <div class="page-header">
+      <div class="page-title">Teams</div>
+      <button class="btn btn-primary" onclick="openAddTeam()">+ Team toevoegen</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">${S.teams.length}</div><div class="stat-label">Teams</div></div>
+      <div class="stat"><div class="stat-num">${totalOpen}</div><div class="stat-label">Open acties</div></div>
+      <div class="stat"><div class="stat-num" style="${totalLate>0?'color:var(--red)':''}">${totalLate}</div><div class="stat-label">Verlopen</div></div>
+    </div>
+    <div class="team-grid">${grid}</div>
+    <div id="detail-area"></div>`;
+  if(S.sel!==null&&S.teams[S.sel]) renderDetail(S.sel);
+}
+
+function selectTeam(i) { S.sel=S.sel===i?null:i; S.menu=null; render(); }
+
+function renderDetail(i) {
+  const t = S.teams[i];
+  const area = document.getElementById('detail-area');
+  if(!area||!t) return;
+  const proc = getProcess(t.processId);
+  const phases = proc?.phases||[];
+
+  const phaseFlow = phases.map((p,pi) => {
+    const st = (t.phaseStatus||{})[p.id]||'pending';
+    const arrow = pi<phases.length-1?'<div class="phase-arrow"></div>':'';
+    const menuHTML = (S.menu&&S.menu.ti===i&&S.menu.pi===pi)?`
+      <div class="status-menu">
+        ${['done','active','pending'].map(s=>`
+          <div class="status-opt" onclick="setPhaseStatus(${i},${pi},'${s}');event.stopPropagation();">
+            <div class="status-opt-dot" style="background:${SC[s]};${s==='pending'?'border:1.5px solid #B0AEA6;':''}"></div>${SL[s]}
+          </div>`).join('')}
+      </div>`:'';
+    return `<div class="phase-step">
+      <div class="phase-circle ${st}" onclick="toggleMenu(${i},${pi},event)">${p.label}</div>
+      <div class="phase-label">${p.label}</div>
+      ${menuHTML}
+    </div>${arrow}`;
+  }).join('');
+
+  const actions = (t.actions||[]).map((a,ai) => {
+    const s = dateStatus(a.date);
+    const dateField = a.date
+      ?`<input type="date" class="action-date-input${s?' '+s:''}" value="${a.date}" onchange="setActionDate(${i},${ai},this.value)"/>`
+      :`<input type="date" class="action-date-empty" value="" onchange="setActionDate(${i},${ai},this.value)" title="Datum toevoegen"/>`;
+    const hasNote=!!(a.note&&a.note.trim());
+    return `<div class="action-item${a.done?' done':''}" id="aitem-${i}-${ai}">
+      <div class="action-row">
+        <div class="check${a.done?' on':''}" onclick="toggleAction(${i},${ai})">${a.done?'&#10003;':''}</div>
+        <input class="action-text-input" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="setActionText(${i},${ai},this.value)" onblur="setActionText(${i},${ai},this.value)" placeholder="Actie omschrijving..."/>
+        ${dateField}
+        <button class="action-expand${hasNote?' open':''}" onclick="toggleNote(${i},${ai})" title="Notitie">&#9660;</button>
+        <button class="btn-del" onclick="delAction(${i},${ai})">&#10005;</button>
+      </div>
+      <div class="action-note-area${hasNote?' open':''}" id="anote-${i}-${ai}">
+        <textarea class="action-note-input" placeholder="Extra context of notities..." onchange="setActionNote(${i},${ai},this.value)" onblur="setActionNote(${i},${ai},this.value)">${a.note||''}</textarea>
+      </div>
+    </div>`;
+  }).join('')||'<div class="empty">Geen acties voor dit team</div>';
+
+  area.innerHTML=`<div class="detail">
+    <div class="detail-header">
+      <div class="detail-title">${t.name}</div>
+      <button class="btn btn-ghost" onclick="renameTeam(${i})">Naam</button>
+      <button class="btn btn-ghost" onclick="changeProcess(${i})">Proces wijzigen</button>
+      <button class="btn" style="color:var(--red);" onclick="delTeam(${i})">Verwijderen</button>
+    </div>
+    <div class="section-label">Voortgang — ${proc?.name||''}</div>
+    <div class="status-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Klaar</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue);"></div>In progress</div>
+      <div class="legend-item"><div class="legend-dot" style="background:transparent;border:1.5px solid #C8C6BE;width:10px;height:10px;border-radius:50%;"></div>Nog starten</div>
+    </div>
+    <div class="phase-flow">${phaseFlow}</div>
+    <div class="divider"></div>
+    <div class="section-label">Acties</div>
+    <div class="action-list">${actions}</div>
+    <div class="add-row">
+      <input type="text" id="na-${i}" placeholder="Nieuwe actie..." onkeydown="if(event.key==='Enter')addAction(${i})"/>
+      <button class="btn btn-primary" onclick="addAction(${i})">Toevoegen</button>
+    </div>
+  </div>`;
+}
+
+function toggleMenu(ti,pi,e) {
+  e.stopPropagation();
+  if(S.menu&&S.menu.ti===ti&&S.menu.pi===pi){S.menu=null;}else{S.menu={ti,pi};}
+  renderDetail(ti);
+  if(S.menu){setTimeout(()=>document.addEventListener('click',()=>{S.menu=null;renderDetail(ti);},{once:true}),10);}
+}
+
+function setPhaseStatus(ti,pi,status) {
+  const proc=getProcess(S.teams[ti].processId);
+  const pid=proc?.phases[pi]?.id;
+  if(!pid) return;
+  if(!S.teams[ti].phaseStatus) S.teams[ti].phaseStatus={};
+  S.teams[ti].phaseStatus[pid]=status;
+  S.menu=null;
+  saveTeam(S.teams[ti]); render();
+}
+
+function addAction(i) {
+  const txt=document.getElementById(`na-${i}`)?.value.trim();
+  if(!txt) return;
+  if(!S.teams[i].actions) S.teams[i].actions=[];
+  S.teams[i].actions.push({id:uid(),text:txt,date:'',done:false,note:''});
+  saveTeam(S.teams[i]); render();
+}
+
+function toggleAction(ti,ai) { S.teams[ti].actions[ai].done=!S.teams[ti].actions[ai].done; saveTeam(S.teams[ti]); render(); }
+function delAction(ti,ai) { S.teams[ti].actions.splice(ai,1); saveTeam(S.teams[ti]); render(); }
+
+let _textTimer;
+function setActionText(ti,ai,val) {
+  S.teams[ti].actions[ai].text=val;
+  clearTimeout(_textTimer);
+  _textTimer=setTimeout(()=>saveTeam(S.teams[ti]),800);
+}
+
+let _noteTimer;
+function setActionNote(ti,ai,val) {
+  S.teams[ti].actions[ai].note=val;
+  clearTimeout(_noteTimer);
+  _noteTimer=setTimeout(()=>saveTeam(S.teams[ti]),800);
+}
+
+function setActionDate(ti,ai,val) { S.teams[ti].actions[ai].date=val; saveTeam(S.teams[ti]); }
+
+function toggleNote(ti,ai) {
+  const area=document.getElementById(`anote-${ti}-${ai}`);
+  const btn=area?.previousElementSibling?.querySelector('.action-expand');
+  if(!area) return;
+  area.classList.toggle('open');
+  if(btn) btn.classList.toggle('open');
+  if(area.classList.contains('open')) area.querySelector('textarea')?.focus();
+}
+
+async function delTeam(i) {
+  if(!confirm(`Team "${S.teams[i].name}" verwijderen?`)) return;
+  await DEL('teams', S.teams[i].id);
+  S.teams.splice(i,1); S.sel=null; render();
+}
+
+// ── Team modals ──────────────────────────────────────────────
+function openAddTeam() {
+  const procOpts=S.processes.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('modal-root').innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>Team toevoegen</h3>
+        <p>Kies een naam en een stappenplan.</p>
+        <input type="text" id="m-name" placeholder="Teamnaam..." onkeydown="if(event.key==='Enter')confirmAdd()"/>
+        <select id="m-proc">${procOpts}</select>
+        <div class="modal-btns">
+          <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
+          <button class="btn btn-primary" onclick="confirmAdd()">Toevoegen</button>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(()=>document.getElementById('m-name')?.focus(),50);
+}
+
+async function confirmAdd() {
+  const n=document.getElementById('m-name')?.value.trim();
+  const procId=document.getElementById('m-proc')?.value;
+  if(!n) return;
+  const proc=getProcess(procId);
+  const newTeam={id:uid(),name:n,process_id:procId,phase_status:defPhaseStatus(proc),actions:[]};
+  setSyncStatus('syncing');
+  const res=await POST('teams',newTeam);
+  if(Array.isArray(res)&&res[0]) {
+    S.teams.push({...res[0],phaseStatus:res[0].phase_status||{},processId:res[0].process_id,actions:[]});
+  }
+  setSyncStatus('ok');
+  closeModal(); render();
+}
+
+function renameTeam(i) {
+  document.getElementById('modal-root').innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>Naam wijzigen</h3>
+        <input type="text" id="m-inp" value="${S.teams[i].name}" onkeydown="if(event.key==='Enter')confirmRename(${i})"/>
+        <div class="modal-btns">
+          <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
+          <button class="btn btn-primary" onclick="confirmRename(${i})">Opslaan</button>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById('m-inp');el?.focus();el?.select();},50);
+}
+
+async function confirmRename(i) {
+  const v=document.getElementById('m-inp')?.value.trim();
+  if(!v) return;
+  S.teams[i].name=v;
+  await saveTeam(S.teams[i]);
+  closeModal(); render();
+}
+
+function changeProcess(i) {
+  const procOpts=S.processes.map(p=>`<option value="${p.id}"${S.teams[i].processId===p.id?' selected':''}>${p.name}</option>`).join('');
+  document.getElementById('modal-root').innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>Proces wijzigen</h3>
+        <p>Let op: fase-voortgang wordt gereset.</p>
+        <select id="m-proc">${procOpts}</select>
+        <div class="modal-btns">
+          <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
+          <button class="btn btn-primary" onclick="confirmChangeProcess(${i})">Opslaan</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function confirmChangeProcess(i) {
+  const procId=document.getElementById('m-proc')?.value;
+  const proc=getProcess(procId);
+  S.teams[i].processId=procId;
+  S.teams[i].phaseStatus=defPhaseStatus(proc);
+  await saveTeam(S.teams[i]);
+  closeModal(); render();
+}
+
+function closeModal() { document.getElementById('modal-root').innerHTML=''; }
+
+// ── Processen ──────────────────────────────────────────────
+function renderProcessen(m) {
+  const cards=S.processes.map((p,pi)=>{
+    const pills=p.phases.map(ph=>`<span class="proc-step-pill">${ph.label}</span>`).join('');
+    const teamCount=S.teams.filter(t=>t.processId===p.id).length;
+    const isEdit=S.editProc===p.id;
+    return `<div class="process-card${isEdit?' selected-proc':''}">
+      <div class="process-card-name">${p.name}</div>
+      <div class="process-card-meta">${p.phases.length} fases · ${teamCount} team${teamCount!==1?'s':''}</div>
+      <div class="process-steps-preview">${pills}</div>
+      <div class="process-card-actions">
+        <button class="btn" style="font-size:12px;" onclick="toggleEditProc('${p.id}')">${isEdit?'Sluiten':'Bewerken'}</button>
+        ${S.processes.length>1?`<button class="btn" style="font-size:12px;color:var(--red);" onclick="delProcess('${p.id}')">Verwijderen</button>`:''}
+      </div>
+      ${isEdit?buildPhaseEditor(p,pi):''}
+    </div>`;
+  }).join('');
+
+  m.innerHTML=`
+    <div class="page-header">
+      <div class="page-title">Processen</div>
+      <button class="btn btn-primary" onclick="addProcess()">+ Nieuw proces</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem;">Stel hier je stappenplannen in. Elk team kan een eigen proces krijgen.</p>
+    <div class="process-grid">${cards}</div>`;
+}
+
+function buildPhaseEditor(p,pi) {
+  const rows=p.phases.map((ph,phi)=>`
+    <div class="phase-editor-row" draggable="true"
+      ondragstart="dragStart(${pi},${phi})"
+      ondragover="dragOver(event,${pi},${phi})"
+      ondrop="dragDrop(event,${pi},${phi})"
+      ondragend="dragEnd()"
+      id="prow-${pi}-${phi}">
+      <span class="drag-handle">⣿</span>
+      <input type="text" value="${ph.label}" onchange="renamePhase('${p.id}',${phi},this.value)" placeholder="Fase naam..."/>
+      <button class="move-btn" onclick="movePhase('${p.id}',${phi},-1)" ${phi===0?'disabled':''}>↑</button>
+      <button class="move-btn" onclick="movePhase('${p.id}',${phi},1)" ${phi===p.phases.length-1?'disabled':''}>↓</button>
+      <button class="btn-del" onclick="delPhase('${p.id}',${phi})">&#10005;</button>
+    </div>`).join('');
+  return `<div class="phase-editor">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+      <input class="process-input" style="flex:1;" value="${p.name}" onchange="renameProcess('${p.id}',this.value)" placeholder="Procesnaam..."/>
+    </div>
+    <div class="section-label">Fases</div>
+    <div class="phase-editor-list" id="plist-${pi}">${rows}</div>
+    <button class="btn" style="font-size:12px;" onclick="addPhase('${p.id}')">+ Fase toevoegen</button>
+  </div>`;
+}
+
+function toggleEditProc(id) { S.editProc=S.editProc===id?null:id; render(); }
+
+async function addProcess() {
+  const p={id:uid(),name:'Nieuw proces',phases:[{id:uid(),label:'Fase 1'}]};
+  setSyncStatus('syncing');
+  await POST('processes',p);
+  S.processes.push(p); S.editProc=p.id; setSyncStatus('ok'); render();
+}
+
+async function delProcess(id) {
+  if(!confirm('Dit proces verwijderen?')) return;
+  await DEL('processes',id);
+  S.processes=S.processes.filter(p=>p.id!==id);
+  S.teams.forEach(t=>{if(t.processId===id){t.processId=S.processes[0]?.id;t.phaseStatus={};}});
+  render();
+}
+
+let _procTimer;
+function renameProcess(id,val) {
+  const p=S.processes.find(p=>p.id===id);
+  if(p){p.name=val;clearTimeout(_procTimer);_procTimer=setTimeout(()=>saveProcess(p),800);}
+}
+
+async function addPhase(procId) {
+  const p=S.processes.find(p=>p.id===procId);
+  if(p){p.phases.push({id:uid(),label:'Nieuwe fase'});await saveProcess(p);render();}
+}
+
+async function delPhase(procId,phi) {
+  const p=S.processes.find(p=>p.id===procId);
+  if(p&&p.phases.length>1){p.phases.splice(phi,1);await saveProcess(p);render();}
+}
+
+let _phaseTimer;
+function renamePhase(procId,phi,val) {
+  const p=S.processes.find(p=>p.id===procId);
+  if(p){p.phases[phi].label=val;clearTimeout(_phaseTimer);_phaseTimer=setTimeout(()=>saveProcess(p),800);}
+}
+
+async function movePhase(procId,phi,dir) {
+  const p=S.processes.find(p=>p.id===procId);
+  if(!p) return;
+  const ni=phi+dir;
+  if(ni<0||ni>=p.phases.length) return;
+  [p.phases[phi],p.phases[ni]]=[p.phases[ni],p.phases[phi]];
+  await saveProcess(p); render();
+}
+
+function dragStart(pi,phi){S.dragIdx={pi,phi};}
+function dragOver(e,pi,phi){e.preventDefault();document.querySelectorAll('.phase-editor-row').forEach(r=>r.classList.remove('drag-over'));document.getElementById(`prow-${pi}-${phi}`)?.classList.add('drag-over');}
+function dragDrop(e,pi,phi){e.preventDefault();if(!S.dragIdx||S.dragIdx.pi!==pi)return;const from=S.dragIdx.phi,to=phi;if(from===to)return;const p=S.processes[pi];const moved=p.phases.splice(from,1)[0];p.phases.splice(to,0,moved);S.dragIdx=null;saveProcess(p);render();}
+function dragEnd(){document.querySelectorAll('.phase-editor-row').forEach(r=>r.classList.remove('drag-over'));S.dragIdx=null;}
+
+// ── Kalender ──────────────────────────────────────────────
+function allActionsWithDate() {
+  const res=[];
+  S.teams.forEach(t=>(t.actions||[]).forEach(a=>{if(a.date&&!a.done)res.push({...a,tn:t.name});}));
+  return res;
+}
+
+function renderCalendar(m) {
+  const cv=S.calView||'maand';
+  const td2=today();
+  const viewTabs=['maand','werkweek','dag'].map(v=>
+    `<button class="cal-view-tab${cv===v?' on':''}" onclick="S.calView='${v}';render()">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`
+  ).join('');
+  const all=allActionsWithDate();
+  let navLabel='',navPrev='',navNext='',content='';
+
+  if(cv==='maand') {
+    const y=S.calY,mo=S.calM;
+    navLabel=new Date(y,mo,1).toLocaleString('nl-NL',{month:'long',year:'numeric'});
+    navPrev='calNav(-1)';navNext='calNav(1)';
+    const first=new Date(y,mo,1);let dow=first.getDay();if(dow===0)dow=7;
+    const dim=new Date(y,mo+1,0).getDate();
+    const wds=['Ma','Di','Wo','Do','Vr','Za','Zo'];
+    let cells='';
+    for(let i=1;i<dow;i++)cells+='<div></div>';
+    for(let d=1;d<=dim;d++){
+      const ds2=`${y}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isT=ds2===td2;
+      const dayA=all.filter(a=>a.date===ds2);
+      const evts=dayA.slice(0,3).map(a=>`<div class="cal-evt" title="${a.tn}: ${a.text}"><b>${a.tn}</b> · ${a.text}</div>`).join('');
+      const more=dayA.length>3?`<div class="cal-more">+${dayA.length-3} meer</div>`:'';
+      cells+=`<div class="cal-cell${isT?' is-today':''}"><div class="cal-num">${d}</div>${evts}${more}</div>`;
+    }
+    content=`<div class="cal-weekdays">${wds.map(w=>`<div class="cal-wd">${w}</div>`).join('')}</div><div class="cal-grid">${cells}</div>`;
+
+  } else if(cv==='werkweek') {
+    const ref=S.calDay?new Date(S.calDay+'T00:00:00'):new Date();
+    const dow2=ref.getDay();const diff=dow2===0?-6:1-dow2;
+    const mon=new Date(ref);mon.setDate(ref.getDate()+diff);
+    const weekDays=[];for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);weekDays.push(d);}
+    navLabel=`${weekDays[0].toLocaleDateString('nl-NL',{day:'numeric',month:'short'})} – ${weekDays[4].toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}`;
+    navPrev='weekNav(-1)';navNext='weekNav(1)';
+    const cols=weekDays.map(d=>{
+      const ds2=d.toISOString().slice(0,10);const isT=ds2===td2;
+      const dayA=all.filter(a=>a.date===ds2);
+      const evts=dayA.map(a=>`<div class="week-evt"><div class="week-evt-team">${a.tn}</div><div>${a.text}</div></div>`).join('')||`<div class="week-empty">Geen acties</div>`;
+      return `<div class="week-col${isT?' is-today':''}"><div class="week-col-header">${d.toLocaleDateString('nl-NL',{weekday:'short'})}</div><div class="week-col-date">${d.getDate()}</div>${evts}</div>`;
+    }).join('');
+    content=`<div class="week-grid">${cols}</div>`;
+
+  } else if(cv==='dag') {
+    const ref=S.calDay||td2;
+    navLabel=new Date(ref+'T00:00:00').toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    navPrev='dayNav(-1)';navNext='dayNav(1)';
+    const dayA=all.filter(a=>a.date===ref);
+    content=dayA.map(a=>`<div class="day-evt"><div><div class="day-evt-team">${a.tn}</div><div class="day-evt-text">${a.text}</div></div></div>`).join('')||`<div class="day-empty">Geen acties op deze dag</div>`;
+  }
+
+  m.innerHTML=`
+    <div class="page-header"><div class="page-title">Kalender</div></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;">
+      <div class="cal-nav">
+        <button class="btn" onclick="${navPrev}">&#8592;</button>
+        <span class="cal-month">${navLabel}</span>
+        <button class="btn" onclick="${navNext}">&#8594;</button>
+        <button class="btn btn-ghost" onclick="calToday()">Vandaag</button>
+        <div class="cal-view-tabs">${viewTabs}</div>
+      </div>
+      ${content}
+    </div>`;
+}
+
+function calNav(d){S.calM+=d;if(S.calM>11){S.calM=0;S.calY++;}if(S.calM<0){S.calM=11;S.calY--;}render();}
+function calToday(){S.calY=new Date().getFullYear();S.calM=new Date().getMonth();S.calDay=today();render();}
+function weekNav(d){const ref=S.calDay?new Date(S.calDay+'T00:00:00'):new Date();ref.setDate(ref.getDate()+(d*7));S.calDay=ref.toISOString().slice(0,10);render();}
+function dayNav(d){const ref=S.calDay?new Date(S.calDay+'T00:00:00'):new Date();ref.setDate(ref.getDate()+d);S.calDay=ref.toISOString().slice(0,10);render();}
+
+// ── Overzicht ──────────────────────────────────────────────
+function renderOverzicht(m) {
+  const t=today();
+  const all=[];
+  S.teams.forEach((tm,ti)=>(tm.actions||[]).forEach((a,ai)=>all.push({...a,tn:tm.name,ti,ai})));
+  let filtered=all;
+  if(S.ovf==='open')filtered=all.filter(a=>!a.done);
+  if(S.ovf==='late')filtered=all.filter(a=>!a.done&&a.date&&a.date<t);
+  if(S.ovf==='today')filtered=all.filter(a=>!a.done&&a.date===t);
+  filtered.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const rows=filtered.map(a=>{
+    const s=dateStatus(a.date);
+    return `<div class="ov-row" onclick="goTeam(${a.ti})">
+      <span class="ov-team">${a.tn}</span>
+      <span class="ov-text">${a.text}</span>
+      <span class="ov-date${s?' '+s:''}">${a.date||''}</span>
+    </div>`;
+  }).join('')||'<div class="empty">Geen acties gevonden</div>';
+  m.innerHTML=`
+    <div class="page-header"><div class="page-title">Overzicht</div></div>
+    <div class="ov-filter">
+      <select onchange="S.ovf=this.value;render();">
+        <option value="all"${S.ovf==='all'?' selected':''}>Alle acties</option>
+        <option value="open"${S.ovf==='open'?' selected':''}>Openstaand</option>
+        <option value="late"${S.ovf==='late'?' selected':''}>Verlopen</option>
+        <option value="today"${S.ovf==='today'?' selected':''}>Vandaag</option>
+      </select>
+    </div>${rows}`;
+}
+
+function goTeam(ti){S.view='teams';S.sel=ti;document.querySelectorAll('.nav-item[data-view]').forEach((n,idx)=>{if(idx===0)n.classList.add('active');else n.classList.remove('active');});render();}
+
+load();
+</script>
+</body>
+</html>
