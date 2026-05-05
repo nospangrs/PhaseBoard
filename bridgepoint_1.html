@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<!-- Primary SEO -->
+<title>BridgePoint — De brug tussen strategie en sprint</title>
+<meta name="description" content="BridgePoint levert ervaren Scrum Masters die de verbinding maken tussen projectdoelen en agile teams. Specialist in Prince2, Scrum en AI-gedreven procesverbetering."/>
+<meta name="keywords" content="scrum master, projectregie, agile, prince2, scrum, AI, verandermanagement, zzp, nederland"/>
+<meta name="author" content="BridgePoint"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://bridgepoint.vercel.app/"/>
+
+<!-- Open Graph (LinkedIn, Facebook) -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://bridgepoint.vercel.app/"/>
+<meta property="og:title" content="BridgePoint — De brug tussen strategie en sprint"/>
+<meta property="og:description" content="Ervaren Scrum Masters die projectdoelen verbinden met agile teams. Specialist in Prince2, Scrum en praktische AI-toepassingen."/>
+<meta property="og:locale" content="nl_NL"/>
+<meta property="og:site_name" content="BridgePoint"/>
+
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="BridgePoint — De brug tussen strategie en sprint"/>
+<meta name="twitter:description" content="Ervaren Scrum Masters die projectdoelen verbinden met agile teams."/>
+
+<!-- Structured Data (schema.org) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "BridgePoint",
+  "description": "BridgePoint levert ervaren Scrum Masters die de verbinding maken tussen projectdoelen en agile teams. Specialist in Prince2, Scrum en AI-gedreven procesverbetering.",
+  "url": "https://bridgepoint.vercel.app",
+  "slogan": "De brug tussen strategie en sprint",
+  "areaServed": "NL",
+  "knowsAbout": ["Scrum", "Agile", "Prince2", "Projectmanagement", "AI", "Verandermanagement"],
+  "serviceType": ["Scrum Master", "Projectregie", "Agile coaching"]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --creme:      #EEF0E8;
+  --creme-mid:  #D8DDD0;
+  --groen-licht:#C8D4A0;
+  --groen:      #4A6741;
+  --groen-diep: #1A2A18;
+  --goud:       #C5962A;
+  --goud-licht: #E8C96A;
+  --wit:        #FAFAF7;
+  --tekst:      #1A2A18;
+  --tekst-mid:  #4A5A47;
+  --tekst-sub:  #7A8A77;
+  --border:     rgba(26,42,24,0.1);
+  --border-mid: rgba(26,42,24,0.15);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--wit);
+  color: var(--tekst);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 3rem;
+  background: rgba(250,250,247,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 400;
+  color: var(--groen-diep);
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--goud); }
+
+.nav-links { display: flex; gap: 2rem; align-items: center; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--tekst-sub); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--tekst); }
+
+.nav-cta {
+  font-family: var(--font-body);
+  font-size: 12px; font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 4px;
+  background: var(--goud);
+  color: var(--groen-diep);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--goud-licht); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+  background: var(--groen-diep);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  border: 1px solid rgba(197,150,42,0.15);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: 30%;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(197,150,42,0.08);
+  pointer-events: none;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem 3rem 6rem 6rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--goud);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--goud);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--creme);
+  margin-bottom: 1.5rem;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--goud-licht);
+}
+
+.hero-sub {
+  font-size: 17px;
+  color: var(--creme-mid);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+  opacity: 0.8;
+}
+
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.btn-primary {
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 4px;
+  background: var(--goud);
+  color: var(--groen-diep);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: background 0.2s, transform 0.15s;
+  border: none; cursor: pointer;
+}
+.btn-primary:hover { background: var(--goud-licht); transform: translateY(-1px); }
+
+.btn-secondary {
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--creme);
+  text-decoration: none;
+  border: 1px solid rgba(238,240,232,0.25);
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.btn-secondary:hover { border-color: rgba(238,240,232,0.6); transform: translateY(-1px); }
+
+.hero-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 4rem 6rem 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-visual {
+  width: 100%;
+  max-width: 520px;
+  background: var(--groen-diep);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(197,150,42,0.15);
+  transform: perspective(1000px) rotateY(-4deg) rotateX(2deg);
+  transition: transform 0.4s ease;
+}
+
+.hero-visual:hover { transform: perspective(1000px) rotateY(-1deg) rotateX(0deg); }
+
+.app-bar {
+  background: rgba(0,0,0,0.25);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.app-dots { display: flex; gap: 6px; }
+.app-dot { width: 10px; height: 10px; border-radius: 50%; }
+.app-dot:nth-child(1) { background: #FF5F57; }
+.app-dot:nth-child(2) { background: #FEBC2E; }
+.app-dot:nth-child(3) { background: #28C840; }
+
+.app-title-bar {
+  font-size: 12px;
+  color: rgba(238,240,232,0.35);
+  font-family: var(--font-body);
+  flex: 1;
+  text-align: center;
+}
+
+.app-content {
+  padding: 20px;
+  background: var(--creme);
+}
+
+.app-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.app-page-title {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--groen-diep);
+}
+
+.app-add-btn {
+  font-size: 11px;
+  padding: 5px 10px;
+  background: var(--groen-diep);
+  color: var(--creme);
+  border-radius: 4px;
+}
+
+.app-stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.app-stat {
+  background: var(--wit);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  border: 1px solid var(--creme-mid);
+}
+
+.app-stat-n { font-size: 18px; font-weight: 600; color: var(--groen-diep); }
+.app-stat-l { font-size: 10px; color: var(--tekst-sub); margin-top: 1px; }
+
+.app-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.app-team {
+  background: var(--wit);
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid var(--creme-mid);
+}
+
+.app-team-name { font-size: 12px; font-weight: 600; color: var(--groen-diep); margin-bottom: 8px; }
+
+.app-dots-row { display: flex; gap: 3px; flex-wrap: wrap; }
+.app-phase-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.app-team-meta { font-size: 10px; color: var(--tekst-sub); margin-top: 5px; }
+
+/* ── Stats bar ── */
+.stats-bar {
+  background: var(--groen);
+  padding: 3rem 6rem;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 2rem;
+}
+
+.stats-bar-item { text-align: center; }
+.stats-bar-num {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 400;
+  color: var(--creme);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.stats-bar-num span { color: var(--goud-licht); }
+.stats-bar-label { font-size: 13px; color: rgba(238,240,232,0.55); margin-top: 4px; }
+
+/* ── Sections ── */
+section { padding: 7rem 6rem; }
+
+.section-eyebrow {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--goud); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before { content:''; display:block; width:24px; height:1.5px; background:var(--goud); }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 400;
+  line-height: 1.15;
+  max-width: 600px;
+  margin-bottom: 1.25rem;
+  color: var(--groen-diep);
+}
+
+.section-title em { font-style: italic; color: var(--groen); }
+
+.section-sub { font-size: 17px; color: var(--tekst-mid); max-width: 540px; line-height: 1.7; margin-bottom: 3rem; }
+
+/* ── Services ── */
+.services { background: var(--wit); }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 1.5rem;
+}
+
+.service-card {
+  background: var(--creme);
+  border-radius: 10px;
+  padding: 2rem;
+  border: 0.5px solid var(--creme-mid);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,42,24,0.08); }
+
+.service-icon {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  background: var(--groen-diep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin-bottom: 1.25rem;
+}
+
+.service-title { font-family: var(--font-display); font-size: 20px; font-weight: 400; margin-bottom: 0.75rem; color: var(--groen-diep); }
+.service-text { font-size: 14px; color: var(--tekst-mid); line-height: 1.7; }
+
+/* ── PhaseBoard showcase ── */
+.showcase { background: var(--groen-diep); color: var(--creme); }
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.showcase .section-eyebrow { color: var(--goud); }
+.showcase .section-eyebrow::before { background: var(--goud); }
+.showcase .section-title { color: var(--creme); }
+.showcase .section-sub { color: rgba(238,240,232,0.6); margin-bottom: 2rem; }
+
+.showcase-features { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+.showcase-feature { display: flex; align-items: flex-start; gap: 12px; }
+.feature-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--goud); color: var(--groen-diep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+.feature-text { font-size: 14px; color: rgba(238,240,232,0.8); line-height: 1.6; }
+
+.showcase-visual {
+  background: var(--creme);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(197,150,42,0.2);
+}
+
+.showcase-app-bar {
+  background: var(--groen-diep);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.showcase-inner { padding: 16px; }
+
+.phase-demo { display: flex; align-items: center; gap: 0; margin: 8px 0 16px; flex-wrap: wrap; }
+.phase-ball {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 500; text-align: center;
+  line-height: 1.2; padding: 4px;
+}
+.phase-ball.done { background: var(--groen); color: white; }
+.phase-ball.active { background: var(--groen-diep); color: var(--creme); border: 2px solid var(--goud); }
+.phase-ball.pending { background: var(--creme-mid); color: var(--tekst-sub); }
+.phase-arrow-demo { width: 14px; height: 1.5px; background: var(--creme-mid); flex-shrink: 0; }
+
+.demo-actions { display: flex; flex-direction: column; gap: 5px; }
+.demo-action {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: var(--wit);
+  border-radius: 6px;
+  border: 0.5px solid var(--creme-mid);
+}
+.demo-check { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--creme-mid); flex-shrink: 0; }
+.demo-check.on { background: var(--groen); border-color: var(--groen); }
+.demo-action-text { font-size: 11px; color: var(--groen-diep); flex: 1; }
+.demo-date { font-size: 10px; color: var(--tekst-sub); }
+.demo-date.late { color: #C0503A; font-weight: 500; }
+
+/* ── Approach ── */
+.approach { background: var(--creme); }
+.approach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.approach-steps { display: flex; flex-direction: column; gap: 0; }
+.approach-step { display: flex; gap: 1.5rem; padding-bottom: 2rem; position: relative; }
+.approach-step:not(:last-child)::before { content:''; position:absolute; left:19px; top:40px; bottom:0; width:1.5px; background: var(--creme-mid); }
+.step-num {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: var(--groen-diep); color: var(--creme);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 16px; font-weight: 400;
+}
+.step-content { padding-top: 6px; }
+.step-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--groen-diep); }
+.step-text { font-size: 14px; color: var(--tekst-mid); line-height: 1.7; }
+
+.approach-quote {
+  background: var(--groen-diep);
+  border-radius: 12px;
+  padding: 2.5rem;
+  color: var(--creme);
+  position: sticky;
+  top: 100px;
+}
+
+.quote-text {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.55;
+  margin-bottom: 1.5rem;
+  color: var(--creme);
+}
+
+.quote-author { font-size: 12px; color: rgba(238,240,232,0.45); letter-spacing: 0.08em; }
+.quote-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 1.5rem; }
+.quote-tag { font-size: 11px; padding: 4px 10px; border-radius: 99px; background: rgba(238,240,232,0.07); color: rgba(238,240,232,0.5); }
+
+/* ── CTA ── */
+.cta-section {
+  background: var(--groen);
+  padding: 6rem;
+  text-align: center;
+}
+
+.cta-section .section-title { color: var(--creme); margin: 0 auto 1rem; }
+.cta-section .section-eyebrow { justify-content: center; color: var(--goud-licht); }
+.cta-section .section-eyebrow::before { background: var(--goud-licht); }
+.cta-section .section-sub { color: rgba(238,240,232,0.65); margin: 0 auto 2.5rem; }
+
+.btn-white {
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 500;
+  padding: 12px 28px;
+  border-radius: 4px;
+  background: var(--goud);
+  color: var(--groen-diep);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  display: inline-block;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-white:hover { background: var(--goud-licht); transform: translateY(-2px); }
+
+/* ── Footer ── */
+footer {
+  background: var(--groen-diep);
+  padding: 2.5rem 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(197,150,42,0.15);
+}
+
+.footer-logo { font-family: var(--font-display); font-size: 18px; font-weight: 400; color: var(--creme); }
+.footer-logo span { color: var(--goud); }
+.footer-copy { font-size: 12px; color: rgba(238,240,232,0.3); }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.hero-eyebrow { animation: fadeUp 0.6s ease both; animation-delay: 0.1s; }
+.hero-title   { animation: fadeUp 0.6s ease both; animation-delay: 0.2s; }
+.hero-sub     { animation: fadeUp 0.6s ease both; animation-delay: 0.3s; }
+.hero-actions { animation: fadeUp 0.6s ease both; animation-delay: 0.4s; }
+.hero-visual  { animation: fadeUp 0.8s ease both; animation-delay: 0.3s; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { padding: 5rem 1.5rem 2rem; }
+  .hero-right { padding: 2rem 1.5rem 4rem; }
+  .stats-bar { grid-template-columns: repeat(2,1fr); padding: 3rem 2rem; }
+  section { padding: 4rem 1.5rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .showcase-grid { grid-template-columns: 1fr; }
+  .approach-grid { grid-template-columns: 1fr; }
+  .cta-section { padding: 4rem 1.5rem; }
+  footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="#">Bridge<span>Point</span></a>
+  <div class="nav-links">
+    <a href="#diensten">Diensten</a>
+    <a href="#phaseapp">PhaseBoard</a>
+    <a href="#aanpak">Aanpak</a>
+    <a href="#contact" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Scrum Master &amp; Projectregie</div>
+    <h1 class="hero-title">De brug tussen <em>strategie</em> en sprint.</h1>
+    <p class="hero-sub">BridgePoint levert ervaren Scrum Masters die niet alleen teams begeleiden, maar ook de verbinding maken met projectdoelen, stakeholders en organisatiestrategie.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Neem contact op</a>
+      <a href="#phaseapp" class="btn-secondary">Bekijk PhaseBoard →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="app-bar">
+        <div class="app-dots"><div class="app-dot"></div><div class="app-dot"></div><div class="app-dot"></div></div>
+        <div class="app-title-bar">PhaseBoard — Teams</div>
+      </div>
+      <div class="app-content">
+        <div class="app-header-row">
+          <div class="app-page-title">Teams</div>
+          <div class="app-add-btn">+ Team toevoegen</div>
+        </div>
+        <div class="app-stats">
+          <div class="app-stat"><div class="app-stat-n">10</div><div class="app-stat-l">Teams</div></div>
+          <div class="app-stat"><div class="app-stat-n">23</div><div class="app-stat-l">Open acties</div></div>
+          <div class="app-stat"><div class="app-stat-n" style="color:#C0392B;">3</div><div class="app-stat-l">Verlopen</div></div>
+        </div>
+        <div class="app-teams">
+          <div class="app-team">
+            <div class="app-team-name">Team Atlas</div>
+
+            <div class="app-dots-row">
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#1A2A18;border:1.5px solid #C5962A;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+            </div>
+            <div class="app-team-meta">2 open acties</div>
+          </div>
+          <div class="app-team">
+            <div class="app-team-name">Team Nova</div>
+
+            <div class="app-dots-row">
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#1A2A18;border:1.5px solid #C5962A;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+            </div>
+            <div class="app-team-meta">3 open acties</div>
+          </div>
+          <div class="app-team">
+            <div class="app-team-name">Team Orion</div>
+
+            <div class="app-dots-row">
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#1A2A18;border:1.5px solid #C5962A;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+            </div>
+            <div class="app-team-meta">1 open actie</div>
+          </div>
+          <div class="app-team">
+            <div class="app-team-name">Team Apex</div>
+
+            <div class="app-dots-row">
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#4A6741;"></div>
+              <div class="app-phase-dot" style="background:#1A2A18;border:1.5px solid #C5962A;"></div>
+              <div class="app-phase-dot" style="background:transparent;border:1.5px solid #D8DDD0;"></div>
+            </div>
+            <div class="app-team-meta">0 open acties</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stats-bar-item">
+    <div class="stats-bar-num">11<span>+</span></div>
+    <div class="stats-bar-label">Jaar ervaring als Scrum Master</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num">10<span>+</span></div>
+    <div class="stats-bar-label">Teams tegelijk begeleid</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num">2</div>
+    <div class="stats-bar-label">Frameworks: Prince2 &amp; Agile</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num">AI</div>
+    <div class="stats-bar-label">Praktische AI-toepassingen in elke opdracht</div>
+  </div>
+</div>
+
+<!-- Diensten -->
+<section class="services" id="diensten">
+  <div class="section-eyebrow">Wat wij doen</div>
+  <h2 class="section-title">Meer dan een <em>Scrum Master</em></h2>
+  <p class="section-sub">BridgePoint levert professionals die zowel de taal van het project als de taal van het team spreken.</p>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🔗</div>
+      <h3 class="service-title">Scrum Master</h3>
+      <p class="service-text">Begeleiding van agile teams in hun dagelijkse werk. Sprintplanning, retrospectives, impediment removal en teamcoaching op hoog niveau.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🎯</div>
+      <h3 class="service-title">Projectregie</h3>
+      <p class="service-text">De vertaallaag tussen Prince2-projecten en agile uitvoering. Voortgang zichtbaar maken voor senior management zonder de teams te belasten.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤖</div>
+      <h3 class="service-title">AI in de praktijk</h3>
+      <p class="service-text">Wij passen AI toe in ons dagelijks werk. Van tools bouwen tot processen versnellen — geen theorie, maar direct bruikbare oplossingen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PhaseBoard showcase -->
+<section class="showcase" id="phaseapp">
+  <div class="showcase-grid">
+    <div>
+      <div class="section-eyebrow">Gebouwd door BridgePoint</div>
+      <h2 class="section-title">Introduceer <em>PhaseBoard</em></h2>
+      <p class="section-sub">Een tool die we zelf hebben gebouwd om 10 teams tegelijk te begeleiden door een gestructureerd veranderproces. Gebouwd met AI, zonder een regel code te kennen.</p>
+      <div class="showcase-features">
+        <div class="showcase-feature">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Fase-voortgang per team in één overzicht — groen, blauw of grijs</div>
+        </div>
+        <div class="showcase-feature">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Acties koppelen aan teams met deadline en notities</div>
+        </div>
+        <div class="showcase-feature">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Kalender per dag, werkweek of maand</div>
+        </div>
+        <div class="showcase-feature">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Instelbare stappenplannen als template per team</div>
+        </div>
+        <div class="showcase-feature">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Gesynchroniseerd via de cloud — werkt op elk device</div>
+        </div>
+      </div>
+      <a href="/phaseapp.html" target="_blank" class="btn-primary" style="display:inline-block;">Bekijk PhaseBoard live →</a>
+    </div>
+    <div class="showcase-visual">
+      <div class="showcase-app-bar">
+        <div class="app-dots"><div class="app-dot"></div><div class="app-dot"></div><div class="app-dot"></div></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:8px;">Team Atlas — Detail</div>
+      </div>
+      <div class="showcase-inner">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7A7870;margin-bottom:8px;">Voortgang per fase</div>
+        <div class="phase-demo">
+          <div class="phase-ball done">Voorbe&shy;reiden</div>
+          <div class="phase-arrow-demo"></div>
+          <div class="phase-ball done">Inventa&shy;riseren</div>
+          <div class="phase-arrow-demo"></div>
+          <div class="phase-ball active">Klant&shy;onderzoek</div>
+          <div class="phase-arrow-demo"></div>
+          <div class="phase-ball pending">Oplei&shy;ding</div>
+          <div class="phase-arrow-demo"></div>
+          <div class="phase-ball pending">Her&shy;schrijven</div>
+        </div>
+        <div style="height:1px;background:rgba(0,0,0,0.06);margin:12px 0;"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7A7870;margin-bottom:8px;">Acties</div>
+        <div class="demo-actions">
+          <div class="demo-action">
+            <div class="demo-check on"></div>
+            <div class="demo-action-text">Feedbacksessie klanten afronden</div>
+            <div class="demo-date">28/04</div>
+          </div>
+          <div class="demo-action">
+            <div class="demo-check"></div>
+            <div class="demo-action-text">Implementatieplan bespreken met Tess</div>
+            <div class="demo-date late">30/04</div>
+          </div>
+          <div class="demo-action">
+            <div class="demo-check"></div>
+            <div class="demo-action-text">Opleiding B opstarten</div>
+            <div class="demo-date">15/05</div>
+          </div>
+          <div class="demo-action">
+            <div class="demo-check"></div>
+            <div class="demo-action-text">JZ en SUA informeren over casus</div>
+            <div class="demo-date">20/05</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Aanpak -->
+<section class="approach" id="aanpak">
+  <div class="approach-grid">
+    <div>
+      <div class="section-eyebrow">Onze aanpak</div>
+      <h2 class="section-title">Structuur voor het project, <em>ruimte</em> voor het team</h2>
+      <p class="section-sub">Wij werken als regisseur tussen twee werelden. Het project wil mijlpalen en deadlines. Het team wil werken in een ritme.</p>
+      <div class="approach-steps">
+        <div class="approach-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Intake &amp; context</div>
+            <p class="step-text">We leren het project, de teams en de organisatie kennen. Wat zijn de doelen, wie zijn de stakeholders, wat is er al geprobeerd?</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Vertaallaag ontwerpen</div>
+            <p class="step-text">We ontwerpen een werkwijze die projectrapportage koppelt aan sprint-uitvoering. Eén taal voor iedereen, zonder overhead.</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Teams begeleiden</div>
+            <p class="step-text">We coachen de teams dagelijks. Ceremonies, impediments, samenwerking en teamdynamiek — wij zijn er.</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Voortgang zichtbaar maken</div>
+            <p class="step-text">Senior management ziet wat ze willen zien. Teams werken zoals ze willen werken. Wij zorgen voor de brug.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="approach-quote">
+        <div class="quote-text">"Een goede regisseur maakt het onzichtbare zichtbaar — de verbinding tussen waar een organisatie naartoe wil en wat teams elke dag doen."</div>
+        <div class="quote-author">BridgePoint</div>
+        <div class="quote-tags">
+          <span class="quote-tag">Prince2</span>
+          <span class="quote-tag">Scrum</span>
+          <span class="quote-tag">Agile</span>
+          <span class="quote-tag">AI</span>
+          <span class="quote-tag">Overheid</span>
+          <span class="quote-tag">Transformatie</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2 class="section-title">Klaar om de brug te slaan?</h2>
+  <p class="section-sub">Vertel ons over uw project en we kijken samen hoe BridgePoint het verschil kan maken.</p>
+  <a href="mailto:info@bridgepoint.nl" class="btn-white">Stuur een bericht</a>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Bridge<span>Point</span></div>
+  <div class="footer-copy">© 2026 BridgePoint. Alle rechten voorbehouden.</div>
+</footer>
+
+</body>
+</html>
